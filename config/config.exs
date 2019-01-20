@@ -22,6 +22,10 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
+config :chatplayer, Chatplayer.UserManager.Guardian,
+  issuer: "auth_me",
+  secret_key: "IKbjsCqQBw0OkdZKTYIyDRFtHoVZKq/XkgeYU8SaSUGG+PBY8bMXWt9Wd/JuSt1T" # put the result of the mix command above here
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

@@ -12,8 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :chatplayer, Chatplayer.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  # username: "postgres",
+  # password: "postgres",
   database: "chatplayer_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

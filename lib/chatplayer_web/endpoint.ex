@@ -35,6 +35,10 @@ defmodule ChatplayerWeb.Endpoint do
     key: "_chatplayer_key",
     signing_salt: "N6ExEMLh"
 
+  plug Corsica,
+    origins: "*",
+    log: [rejected: :error, invalid: :warn, accepted: :debug]
+
   plug ChatplayerWeb.Router
 
   @doc """
