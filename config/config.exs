@@ -13,7 +13,7 @@ config :chatplayer,
 config :chatplayer, ChatplayerWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "qetTaxL9Z3FGBJVfAhObhuCWeoMbjM0/8hOrDWyLvxgNdxnRb8bTEGjZ4h3Epi6K",
-  render_errors: [view: ChatplayerWeb.ErrorView, accepts: ~w(json)],
+  render_errors: [view: ChatplayerWeb.ErrorView, accepts: ~w(json json-api)],
   pubsub: [name: Chatplayer.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
@@ -25,6 +25,14 @@ config :logger, :console,
 config :chatplayer, Chatplayer.UserManager.Guardian,
   issuer: "auth_me",
   secret_key: "IKbjsCqQBw0OkdZKTYIyDRFtHoVZKq/XkgeYU8SaSUGG+PBY8bMXWt9Wd/JuSt1T" # put the result of the mix command above here
+
+# ja_serializer configs
+config :phoenix, :format_encoders,
+  "json-api": Poison
+
+config :mime, :types, %{
+  "application/vnd.api+json" => ["json-api"]
+}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

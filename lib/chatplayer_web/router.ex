@@ -20,14 +20,19 @@ defmodule ChatplayerWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    # plug :accepts, ["json"]
+    plug :accepts, ["json-api"]
+    # plug JaSerializer.ContentTypeNegotiation
+    # plug JaSerializer.Deserializer
   end
 
   scope "/", ChatplayerWeb do
     pipe_through [:api, :auth]
 
-    resources "/users", UsersController, except: [:new, :edit]
-    get "/login", UsersController, :new
+    resources "/rooms", RoomController, except: [:new, :edit]
+
+    resources "/users", UsersController, only: [:show]
+    post "/sign_up", UsersController, :create
     post "/login", UsersController, :login
     post "/logout", UsersController, :logout
   end
