@@ -22,19 +22,28 @@ defmodule ChatplayerWeb.UsersController do
     # end
   end
 
-  def create(conn, %{"data" => data}) do
+  def profile(conn,_) do
+    user = Guardian.Plug.current_resource(conn)
+    conn
+    |> put_status(:ok)
+    |> render("show.json-api", data: user)
+  end
+
+  def sign_up(conn, %{"data" => data}) do
     user_params = JaSerializer.Params.to_attributes(data)
     with {:ok, %User{} = user} <- UserManager.create_user(user_params) do
       conn
       |> put_status(:created)
-      # |> put_resp_header("location", users_path(conn, :sing_up, user))
       |> render("show.json-api", data: user)
     end
   end
 
-  def login(conn, %{"user" => %{"username" => username, "password" => password}}) do
-    UserManager.authenticate_user(username, password)
-    |> login_reply(conn)
+  def sign_in(conn, %{"user" => %{"email" => email, "password" => password}}) do
+    with {:ok, %User{} = user} <- UserManager.authenticate_user(email, password) do
+      conn
+      |> put_status(:ok)
+      |> render("show.json-api", data: user)
+    end
   end
 
   def logout(conn, _) do
@@ -45,14 +54,17 @@ defmodule ChatplayerWeb.UsersController do
 
   defp login_reply({:ok, user}, conn) do
     conn
-    |> put_flash(:success, "Welcome back!")
+    # |> put_flash(:success, "Welcome back!")
     |> Guardian.Plug.sign_in(user)
-    |> redirect(to: "/secret")
+    |> put_status(:ok)
+
+    # |> redirect(to: "/secret")
   end
 
   defp login_reply({:error, reason}, conn) do
     conn
-    |> put_flash(:error, to_string(reason))
-    |> new(%{})
+    |> put_status(:error)
+    # |> render(:error, to_string(reason))
+    # |> new(%{})
   end
 end

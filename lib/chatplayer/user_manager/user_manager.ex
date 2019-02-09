@@ -105,17 +105,17 @@ defmodule Chatplayer.UserManager do
   end
 
 
-  def authenticate_user(username, plain_text_password) do
-    query = from u in User, where: u.username == ^username
+  def authenticate_user(email, plain_text_password) do
+    query = from u in User, where: u.email == ^email
     case Repo.one(query) do
       nil ->
         Bcrypt.dummy_checkpw()
-        {:error, :invalid_credentials}
+        {:error, :unauthorized}
       user ->
         if Bcrypt.checkpw(plain_text_password, user.password) do
           {:ok, user}
         else
-          {:error, :invalid_credentials}
+          {:error, :unauthorized}
         end
     end
   end

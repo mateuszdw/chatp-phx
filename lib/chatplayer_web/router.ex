@@ -32,8 +32,8 @@ defmodule ChatplayerWeb.Router do
     resources "/rooms", RoomController, except: [:new, :edit]
 
     resources "/users", UsersController, only: [:show]
-    post "/sign_up", UsersController, :create
-    post "/login", UsersController, :login
+    post "/sign_up", UsersController, :sign_up
+    post "/sign_in", UsersController, :sign_in
     post "/logout", UsersController, :logout
   end
 end
