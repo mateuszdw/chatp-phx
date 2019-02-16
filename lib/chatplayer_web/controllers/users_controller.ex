@@ -38,9 +38,17 @@ defmodule ChatplayerWeb.UsersController do
     end
   end
 
-  def sign_in(conn, %{"user" => %{"email" => email, "password" => password}}) do
-    with {:ok, %User{} = user} <- UserManager.authenticate_user(email, password) do
-      conn
+  def sign_in(conn, %{"data" => data}) do
+    user_params = JaSerializer.Params.to_attributes(data)
+    with {:ok, %User{} = user} <- UserManager.authenticate_user(user_params["email"], user_params["password"]) do
+      new_conn = Guardian.Plug.sign_in(conn, user)
+      jwt = Guardian.Plug.current_token(new_conn)
+      claims = Guardian.Plug.current_claims(new_conn)
+      exp = Map.get(claims, "exp")
+
+      new_conn
+      |> put_resp_header("authorization", "Bearer #{jwt}")
+      |> put_resp_header("x-expires", "#{exp}")
       |> put_status(:ok)
       |> render("show.json-api", data: user)
     end
@@ -49,7 +57,7 @@ defmodule ChatplayerWeb.UsersController do
   def logout(conn, _) do
     conn
     |> Guardian.Plug.sign_out()
-    |> redirect(to: "/login")
+    |> put_status(:ok)
   end
 
   defp login_reply({:ok, user}, conn) do

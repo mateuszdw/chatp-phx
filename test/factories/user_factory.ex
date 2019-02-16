@@ -5,8 +5,9 @@ defmodule Chatplayer.UserFactory do
     quote do
       def user_factory do
         %Chatplayer.UserManager.User{
-          email: "aaaa@test.com",
-          password: Bcrypt.hashpwsalt("password")
+          email: sequence(:email, &"email-#{&1}@example.com"),
+          name: "valid name",
+          encrypted_password: Bcrypt.hashpwsalt("password")
         }
       end
     end

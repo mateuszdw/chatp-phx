@@ -23,6 +23,10 @@ defmodule Chatplayer.UserManager do
     Repo.all(User)
   end
 
+  def get_last_user do
+    from(d in User, limit: 1, order_by: [desc: d.inserted_at]) |> Repo.one
+  end
+
   @doc """
   Gets a single user.
 
@@ -112,7 +116,7 @@ defmodule Chatplayer.UserManager do
         Bcrypt.dummy_checkpw()
         {:error, :unauthorized}
       user ->
-        if Bcrypt.checkpw(plain_text_password, user.password) do
+        if Bcrypt.checkpw(plain_text_password, user.encrypted_password) do
           {:ok, user}
         else
           {:error, :unauthorized}

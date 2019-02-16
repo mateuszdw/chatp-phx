@@ -2,8 +2,9 @@ defmodule ChatplayerWeb.Router do
   use ChatplayerWeb, :router
 
   # Our pipeline implements "maybe" authenticated. We'll use the `:ensure_auth` below for when we need to make sure someone is logged in.
-  pipeline :auth do
+  pipeline :ensure_auth do
     plug Chatplayer.UserManager.Pipeline
+    plug Guardian.Plug.EnsureAuthenticated
   end
   #
   # # We use ensure_auth to fail if there is no one logged in
@@ -27,11 +28,15 @@ defmodule ChatplayerWeb.Router do
   end
 
   scope "/", ChatplayerWeb do
-    pipe_through [:api, :auth]
+    pipe_through [:api, :ensure_auth]
 
     resources "/rooms", RoomController, except: [:new, :edit]
+    get "/users/me", UsersController, :profile
+  end
 
-    resources "/users", UsersController, only: [:show]
+  scope "/", ChatplayerWeb do
+    pipe_through [:api]
+
     post "/sign_up", UsersController, :sign_up
     post "/sign_in", UsersController, :sign_in
     post "/logout", UsersController, :logout
