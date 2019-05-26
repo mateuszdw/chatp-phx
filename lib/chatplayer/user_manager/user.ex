@@ -18,10 +18,12 @@ defmodule Chatplayer.UserManager.User do
     user
     |> cast(attrs, [:email, :name, :password, :password_confirmation])
     |> validate_required([:email, :name, :password, :password_confirmation])
+    |> validate_confirmation(:password)
     |> unique_constraint(:email)
+    |> put_password_hash()
   end
 
-  defp put_password_hash(%Ecto.Changeset{valid?: true, changes: %{encrypted_password: password}} = changeset) do
+  defp put_password_hash(%Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset) do
     change(changeset, encrypted_password: Bcrypt.hashpwsalt(password))
   end
 

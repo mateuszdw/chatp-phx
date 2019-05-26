@@ -30,7 +30,7 @@ defmodule ChatplayerWeb.Router do
   scope "/", ChatplayerWeb do
     pipe_through [:api, :ensure_auth]
 
-    resources "/rooms", RoomController, except: [:new, :edit]
+    resources "/rooms", RoomsController
     get "/users/me", UsersController, :profile
   end
 

@@ -23,6 +23,10 @@ defmodule Chatplayer.UserManager do
     Repo.all(User)
   end
 
+  def get_first_user do
+    from(d in User, limit: 1, order_by: [asc: d.inserted_at]) |> Repo.one
+  end
+
   def get_last_user do
     from(d in User, limit: 1, order_by: [desc: d.inserted_at]) |> Repo.one
   end
@@ -54,6 +58,7 @@ defmodule Chatplayer.UserManager do
       iex> create_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
+      Chatplayer.UserManager.create_user(%{name: "matt",email: "matt8@o2.pl", password: "12345678", password_confirmation: "12345678"})
   """
   def create_user(attrs \\ %{}) do
     %User{}

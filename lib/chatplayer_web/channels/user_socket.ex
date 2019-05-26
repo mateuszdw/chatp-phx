@@ -1,8 +1,9 @@
 defmodule ChatplayerWeb.UserSocket do
   use Phoenix.Socket
+  alias Chatplayer.{UserManager, UserManager.User, UserManager.Guardian}
 
   ## Channels
-  # channel "room:*", ChatplayerWeb.RoomChannel
+  channel "room:*", ChatplayerWeb.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -19,8 +20,31 @@ defmodule ChatplayerWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
+
+  def connect(params, socket) do
+    # connects everyone to the sockets
+    # do nothing with params
     {:ok, socket}
+
+    # IO.inspect token
+    # if user = verify_token_and_get_user(token) do
+    #   {:ok, assign(socket, :current_user, user)}
+    # else
+    #   {:ok, nil}
+    #   # {:error, %{reason: "unauthorized"}}
+    # end
+  end
+
+  # def connect(params, socket) do
+  #   IO.inspect params
+  #   {:ok, socket}
+  # end
+
+  defp verify_token_and_get_user(token) do
+    case Guardian.decode_and_verify(token) do
+      {:ok, claims} -> UserManager.get_user!(claims["sub"])
+      {:error, _reason} -> nil
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

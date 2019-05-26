@@ -71,7 +71,7 @@ defmodule Chatplayer.UsersControllerTest do
             "email" => user.email,
             "name" => user.name
           },
-          "id" => to_string(get_last_user.id),
+          "id" => to_string(get_last_user().id),
           "type" => "users"
         },
         "jsonapi" => %{"version" => "1.0"}
@@ -102,7 +102,7 @@ defmodule Chatplayer.UsersControllerTest do
   describe "GET /users/me" do
     test "renders user when authenticated", %{conn: conn} do
       user = insert(:user)
-      {:ok, jwt, full_claims} = encode_and_sign(user)
+      {:ok, jwt, _full_claims} = encode_and_sign(user)
       response =
         conn
         |> put_req_header("authorization", "Bearer #{jwt}")
@@ -115,7 +115,7 @@ defmodule Chatplayer.UsersControllerTest do
             "email" => user.email,
             "name" => user.name
           },
-          "id" => to_string(get_last_user.id),
+          "id" => to_string(get_last_user().id),
           "type" => "users"
         },
         "jsonapi" => %{"version" => "1.0"}

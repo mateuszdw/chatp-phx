@@ -101,4 +101,8 @@ defmodule Chatplayer.Api do
   def change_room(%Room{} = room) do
     Room.changeset(room, %{})
   end
+
+  def get_last_room do
+    from(d in Room, limit: 1, order_by: [desc: d.inserted_at]) |> Repo.one
+  end
 end

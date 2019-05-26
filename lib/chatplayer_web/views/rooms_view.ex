@@ -1,4 +1,4 @@
-defmodule ChatplayerWeb.RoomView do
+defmodule ChatplayerWeb.RoomsView do
   use ChatplayerWeb, :view
   use JaSerializer.PhoenixView
 
