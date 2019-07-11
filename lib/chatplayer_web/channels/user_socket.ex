@@ -21,18 +21,14 @@ defmodule ChatplayerWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
 
-  def connect(params, socket) do
-    # connects everyone to the sockets
-    # do nothing with params
-    {:ok, socket}
-
-    # IO.inspect token
-    # if user = verify_token_and_get_user(token) do
-    #   {:ok, assign(socket, :current_user, user)}
-    # else
-    #   {:ok, nil}
-    #   # {:error, %{reason: "unauthorized"}}
-    # end
+  def connect(%{"token" => token}, socket) do
+    if user = verify_token_and_get_user(token) do
+      {:ok, assign(socket, :current_user, user)}
+    else
+      # everyone can connect
+      {:ok, socket}
+      # {:error, %{reason: "unauthorized"}}
+    end
   end
 
   # def connect(params, socket) do
