@@ -1,22 +1,17 @@
 defmodule Chatplayer.UserManagerTest do
   use Chatplayer.DataCase
-
+  import Chatplayer.Factory
   alias Chatplayer.UserManager
 
   describe "users" do
     alias Chatplayer.UserManager.User
 
-    @valid_attrs %{email: "some email", name: "some name", password: "some password"}
-    @update_attrs %{email: "some updated email", name: "some updated name", password: "some updated password"}
+    @valid_attrs %{email: "some email", name: "some name", password: "some password", password_confirmation: "some password"}
+    @update_attrs %{email: "some updated email", name: "some updated name", password: "some updated password", password_confirmation: "some updated password"}
     @invalid_attrs %{email: nil, name: nil, password: nil}
 
-    def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> UserManager.create_user()
-
-      user
+    def user_fixture() do
+      insert(:user)
     end
 
     test "list_users/0 returns all users" do

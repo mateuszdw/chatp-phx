@@ -1,6 +1,5 @@
 defmodule ChatplayerWeb.RoomChannelTest do
   use ChatplayerWeb.ChannelCase
-  alias ChatplayerWeb.RoomChannel
   alias ChatplayerWeb.UserSocket
   import Chatplayer.Factory
   import Chatplayer.UserManager.Guardian
@@ -14,8 +13,8 @@ defmodule ChatplayerWeb.RoomChannelTest do
       {:ok, socket: socket, user: user, room: room}
     end
 
-    test "can join room", %{socket: socket, user: user, room: room} do
-      {:ok, reply, socket} = subscribe_and_join(socket, "room:#{room.id}", %{})
+    test "can join room", %{socket: socket, user: _user, room: room} do
+      {:ok, reply, _socket} = subscribe_and_join(socket, "room:#{room.id}", %{})
       assert reply["data"] == %{
         "attributes" => %{"name" => room.name},
         "id" => to_string(room.id),
@@ -23,7 +22,7 @@ defmodule ChatplayerWeb.RoomChannelTest do
       }
     end
     #
-    test "can't join room", %{socket: socket, user: user, room: room} do
+    test "can't join room", %{socket: socket, user: _user, room: _room} do
       {:error, reply} = subscribe_and_join(socket, "room:0000", %{})
       assert reply == %{reason: "not found"}
     end
@@ -34,8 +33,8 @@ defmodule ChatplayerWeb.RoomChannelTest do
     #   assert_reply ref, :ok, %{"hello" => "there"}
     # end
   #
-    test "can broadcasts to room", %{socket: socket, user: user, room: room} do
-      {:ok, reply, socket} = subscribe_and_join(socket, "room:#{room.id}", %{})
+    test "can broadcasts to room", %{socket: socket, user: _user, room: room} do
+      {:ok, _reply, socket} = subscribe_and_join(socket, "room:#{room.id}", %{})
       push socket, "shout", %{"message" => "some message"}
       assert_broadcast "shout", %{"message" => "some message"}
     end

@@ -1,6 +1,5 @@
 defmodule ChatplayerWeb.UserSocketTest do
   use ChatplayerWeb.ChannelCase
-  alias ChatplayerWeb.RoomChannel
   alias ChatplayerWeb.UserSocket
   import Chatplayer.Factory
   import Chatplayer.UserManager.Guardian
@@ -18,7 +17,7 @@ defmodule ChatplayerWeb.UserSocketTest do
       assert response.assigns.current_user == user
     end
 
-    test "with empty token", %{socket: socket, user: user} do
+    test "with empty token", %{socket: socket, user: _user} do
       {:ok, response} = UserSocket.connect(%{"token" => ""}, socket)
       assert response == socket
     end
