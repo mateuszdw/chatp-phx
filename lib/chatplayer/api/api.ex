@@ -39,6 +39,21 @@ defmodule Chatplayer.Api do
 
   def get_room(id), do: Repo.get(Room, id)
 
+  def get_room_by_name(room_name) do
+    from(r in Room,
+      where: r.name == ^room_name,
+      limit: 1) |> Repo.one
+  end
+
+  def find_or_create_by_name(room_name) do
+    case get_room_by_name(room_name) do
+      nil ->
+        {:ok, %Room{} = room} = create_room(%{name: room_name})
+        room
+      room -> room
+    end
+  end
+
   @doc """
   Creates a room.
 

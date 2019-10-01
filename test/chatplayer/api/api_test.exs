@@ -6,7 +6,8 @@ defmodule Chatplayer.ApiTest do
   describe "rooms" do
     alias Chatplayer.Api.Room
 
-    @valid_attrs %{name: "some name"}
+    @room_name "some name"
+    @valid_attrs %{name: @room_name}
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 
@@ -17,6 +18,22 @@ defmodule Chatplayer.ApiTest do
         |> Api.create_room()
 
       room
+    end
+
+    test "find_or_create_by_name/1 when room exist" do
+      room_fixture()
+      result = Api.find_or_create_by_name(@room_name)
+      assert result.name == @room_name
+    end
+
+    test "find_or_create_by_name/1 when room not exists" do
+      result = Api.find_or_create_by_name(@room_name)
+      assert result.name == @room_name
+    end
+
+    test "get_room_by_name/1 returns room with given name" do
+      room = room_fixture()
+      assert Api.get_room_by_name(@room_name) == room
     end
 
     test "list_rooms/0 returns all rooms" do
