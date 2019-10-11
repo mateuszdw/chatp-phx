@@ -3,7 +3,6 @@ defmodule ChatplayerWeb.UsersView do
   use JaSerializer.PhoenixView
 
   attributes [:email, :name]
-
   # def render("index.json", %{pages: pages}) do
   #   %{data: render_many(pages, UsersView, "page.json")}
   # end

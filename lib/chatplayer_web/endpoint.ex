@@ -36,6 +36,7 @@ defmodule ChatplayerWeb.Endpoint do
     signing_salt: "N6ExEMLh"
 
   plug Corsica,
+    allow_headers: ["content-type", "authorization"],
     origins: "*",
     log: [rejected: :error, invalid: :warn, accepted: :debug]
 

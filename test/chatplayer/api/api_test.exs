@@ -79,4 +79,64 @@ defmodule Chatplayer.ApiTest do
       assert %Ecto.Changeset{} = Api.change_room(room)
     end
   end
+
+  describe "msgs" do
+    alias Chatplayer.Api.Msg
+
+    @valid_attrs %{content: "some content"}
+    @update_attrs %{content: "some updated content"}
+    @invalid_attrs %{content: nil}
+
+    def msg_fixture(attrs \\ %{}) do
+      {:ok, msg} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Api.create_msg()
+
+      msg
+    end
+
+    test "list_msgs/0 returns all msgs" do
+      msg = msg_fixture()
+      assert Api.list_msgs() == [msg]
+    end
+
+    test "get_msg!/1 returns the msg with given id" do
+      msg = msg_fixture()
+      assert Api.get_msg!(msg.id) == msg
+    end
+
+    test "create_msg/1 with valid data creates a msg" do
+      assert {:ok, %Msg{} = msg} = Api.create_msg(@valid_attrs)
+      assert msg.content == "some content"
+    end
+
+    test "create_msg/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Api.create_msg(@invalid_attrs)
+    end
+
+    test "update_msg/2 with valid data updates the msg" do
+      msg = msg_fixture()
+      assert {:ok, msg} = Api.update_msg(msg, @update_attrs)
+      assert %Msg{} = msg
+      assert msg.content == "some updated content"
+    end
+
+    test "update_msg/2 with invalid data returns error changeset" do
+      msg = msg_fixture()
+      assert {:error, %Ecto.Changeset{}} = Api.update_msg(msg, @invalid_attrs)
+      assert msg == Api.get_msg!(msg.id)
+    end
+
+    test "delete_msg/1 deletes the msg" do
+      msg = msg_fixture()
+      assert {:ok, %Msg{}} = Api.delete_msg(msg)
+      assert_raise Ecto.NoResultsError, fn -> Api.get_msg!(msg.id) end
+    end
+
+    test "change_msg/1 returns a msg changeset" do
+      msg = msg_fixture()
+      assert %Ecto.Changeset{} = Api.change_msg(msg)
+    end
+  end
 end

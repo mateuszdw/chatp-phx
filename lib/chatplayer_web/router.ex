@@ -21,8 +21,7 @@ defmodule ChatplayerWeb.Router do
   end
 
   pipeline :api do
-    # plug :accepts, ["json"]
-    plug :accepts, ["json-api"]
+    plug :accepts, ["json","json-api"]
     # plug JaSerializer.ContentTypeNegotiation
     # plug JaSerializer.Deserializer
   end
@@ -30,6 +29,7 @@ defmodule ChatplayerWeb.Router do
   scope "/", ChatplayerWeb do
     pipe_through [:api, :ensure_auth]
 
+    resources "/msgs", MsgController, except: [:new, :edit]
     resources "/rooms", RoomsController
     get "/users/me", UsersController, :profile
   end
@@ -41,25 +41,19 @@ defmodule ChatplayerWeb.Router do
     post "/sign_in", UsersController, :sign_in
     post "/logout", UsersController, :logout
   end
+
+  # fallback to rest request only for aurelia-authorization
+
+  scope "/rest", ChatplayerWeb do
+    pipe_through [:api]
+
+    post "/sign_up", UsersRestController, :sign_up
+    post "/sign_in", UsersRestController, :sign_in
+    post "/logout", UsersRestController, :logout
+  end
+
+  scope "/rest", ChatplayerWeb do
+    pipe_through [:api, :ensure_auth]
+    get "/users/me", UsersRestController, :profile
+  end
 end
-
-
-
-#
-# # Maybe logged in routes
-# scope "/", AuthMeWeb do
-#   pipe_through [:browser, :auth]
-#
-#   get "/", PageController, :index
-#
-#   get "/login", UsersController, :new
-#   post "/login", UsersController, :login
-#   post "/logout", UsersController, :logout
-# end
-#
-# # Definitely logged in scope
-# scope "/", AuthMeWeb do
-#   pipe_through [:browser, :auth, :ensure_auth]
-#
-#   get "/secret", PageController, :secret
-# end
