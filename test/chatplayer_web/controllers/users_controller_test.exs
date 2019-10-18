@@ -123,6 +123,17 @@ defmodule Chatplayer.UsersControllerTest do
 
       assert response == expected
     end
+
+    test "render error when user credentials invalid", %{conn: conn} do
+      user = insert(:user)
+
+      response =
+        conn
+        |> get("/users/me")
+        |> json_response(401)
+
+      assert response["errors"] != nil
+    end
   end
 
 end
