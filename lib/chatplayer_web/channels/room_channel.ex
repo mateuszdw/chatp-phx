@@ -1,14 +1,14 @@
 defmodule ChatplayerWeb.RoomChannel do
   use ChatplayerWeb, :channel
   alias Chatplayer.{Api, UserManager, UserManager.User, UserManager.Guardian}
-  alias ChatplayerWeb.{UsersView, RoomsView}
+  alias ChatplayerWeb.{UsersView, RoomsView, MsgView}
 
   # this channel is public
   # def join("room:purgatory", _message, socket) do
   #   {:ok, socket}
   # end
   def join("room:" <> name, params, socket) do
-    case Api.find_or_create_by_name(name) do
+    case Api.find_or_create_room_by_name(name) do
       nil -> {:error, %{reason: "not found"}}
       room -> {:ok, JaSerializer.format(RoomsView, room), socket}
     end
@@ -41,11 +41,11 @@ defmodule ChatplayerWeb.RoomChannel do
 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (room:lobby).
-  def handle_in("shout", payload, socket) do
+  def handle_in("new_msg", %{"content" => msg}, socket) do
     if user = socket.assigns.current_user do
-      # IO.inspect user
-      broadcast(socket, "shout", payload)
-      {:reply, {:ok, payload}, socket}
+      {:ok, new_msg} = Api.create_msg(%{content: msg})
+      broadcast(socket, "new_msg", %{content: msg})
+      {:reply, {:ok, JaSerializer.format(MsgView, new_msg)}, socket}
     else
       {:error, %{reason: "not logged in"}}
     end

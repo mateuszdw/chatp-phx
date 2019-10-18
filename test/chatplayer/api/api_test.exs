@@ -20,14 +20,14 @@ defmodule Chatplayer.ApiTest do
       room
     end
 
-    test "find_or_create_by_name/1 when room exist" do
+    test "find_or_create_room_by_name/1 when room exist" do
       room_fixture()
-      result = Api.find_or_create_by_name(@room_name)
+      result = Api.find_or_create_room_by_name(@room_name)
       assert result.name == @room_name
     end
 
-    test "find_or_create_by_name/1 when room not exists" do
-      result = Api.find_or_create_by_name(@room_name)
+    test "find_or_create_room_by_name/1 when room not exists" do
+      result = Api.find_or_create_room_by_name(@room_name)
       assert result.name == @room_name
     end
 
