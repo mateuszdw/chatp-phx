@@ -1,0 +1,36 @@
+# Version of docker-compose
+version: '3'
+
+# Containers we are going to run
+services:
+  # Our Phoenix container
+  phoenix:
+    # The build parameters for this container.
+    build:
+      # Here we define that it should build from the current directory
+      context: .
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/chatplayer_prod
+      # Variables to connect to our Postgres server
+      # PGUSER: postgres
+      # PGPASSWORD: postgres
+      PGDATABASE: chatplayer_prod # only for docker-entrypoint script
+      # PGPORT: 5432
+      # Hostname of our Postgres container
+      # PGHOST: db
+    ports:
+      # Mapping the port to make the Phoenix app accessible outside of the container
+      - "4000:4000"
+    depends_on:
+      # The db container needs to be started before we start this container
+      - db
+  db:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    image: postgres:11.3
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+# Define the volumes
+volumes:
+  pgdata:
