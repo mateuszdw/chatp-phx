@@ -31,6 +31,10 @@ defmodule Chatplayer.UserManager do
     from(d in User, limit: 1, order_by: [desc: d.inserted_at]) |> Repo.one
   end
 
+  def get_users(list) do
+    from(u in User, where: u.id in ^list) |> Repo.all
+  end
+
   @doc """
   Gets a single user.
 

@@ -12,6 +12,7 @@ defmodule Chatplayer.Application do
       supervisor(Chatplayer.Repo, []),
       # Start the endpoint when the application starts
       supervisor(ChatplayerWeb.Endpoint, []),
+      supervisor(ChatplayerWeb.UserPresence, []),
       # Start your own worker by calling: Chatplayer.Worker.start_link(arg1, arg2, arg3)
       # worker(Chatplayer.Worker, [arg1, arg2, arg3]),
     ]

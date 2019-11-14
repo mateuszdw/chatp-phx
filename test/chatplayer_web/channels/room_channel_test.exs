@@ -45,7 +45,7 @@ defmodule ChatplayerWeb.RoomChannelTest do
 
     test "when user logged in can broadcasts to room", %{socket: socket, user: _user, room: room} do
       {:ok, _reply, socket} = subscribe_and_join(socket, "room:#{room.id}", %{})
-      push socket, "shout", %{"message" => "some message"}
+      push socket, "new_msg", %{"message" => "some message"}
       assert_broadcast "shout", %{"message" => "some message"}
     end
   end

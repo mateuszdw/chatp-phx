@@ -2,16 +2,30 @@ defmodule ChatplayerWeb.RoomChannel do
   use ChatplayerWeb, :channel
   alias Chatplayer.{Api, UserManager, UserManager.User, UserManager.Guardian}
   alias ChatplayerWeb.{UsersView, RoomsView, MsgView}
+  alias ChatplayerWeb.UserPresence
 
   # this channel is public
   # def join("room:purgatory", _message, socket) do
   #   {:ok, socket}
   # end
   def join("room:" <> name, params, socket) do
+    send(self(), :user_joined)
     case Api.find_or_create_room_by_name(name) do
       nil -> {:error, %{reason: "not found"}}
       room -> {:ok, JaSerializer.format(RoomsView, room), socket}
     end
+  end
+
+  def handle_info(:user_joined, socket) do
+    if user = socket.assigns.current_user do
+      push(socket, "presence_state", UserPresence.list(socket))
+      {:ok, _} = UserPresence.track(socket, user.id, %{
+        online_at: inspect(System.system_time(:second)),
+        devise: :browser,
+        name: user.name
+      })
+    end
+    {:noreply, socket}
   end
 
   # def join("room:" <> room_slug, params, socket) do

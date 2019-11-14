@@ -6,8 +6,8 @@ defmodule Chatplayer.UserManagerTest do
   describe "users" do
     alias Chatplayer.UserManager.User
 
-    @valid_attrs %{email: "some email", name: "some name", password: "some password", password_confirmation: "some password"}
-    @update_attrs %{email: "some updated email", name: "some updated name", password: "some updated password", password_confirmation: "some updated password"}
+    @valid_attrs %{email: "john@example.org", name: "some name", password: "some password", password_confirmation: "some password"}
+    @update_attrs %{email: "paul@example.org", name: "some updated name", password: "some updated password", password_confirmation: "some updated password"}
     @invalid_attrs %{email: nil, name: nil, password: nil}
 
     def user_fixture() do
@@ -26,7 +26,7 @@ defmodule Chatplayer.UserManagerTest do
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = UserManager.create_user(@valid_attrs)
-      assert user.email == "some email"
+      assert user.email == "john@example.org"
       assert user.name == "some name"
       assert user.password == "some password"
     end
@@ -39,7 +39,7 @@ defmodule Chatplayer.UserManagerTest do
       user = user_fixture()
       assert {:ok, user} = UserManager.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.email == "some updated email"
+      assert user.email == "paul@example.org"
       assert user.name == "some updated name"
       assert user.password == "some updated password"
     end
