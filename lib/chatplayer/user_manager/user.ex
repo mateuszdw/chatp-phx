@@ -2,6 +2,7 @@ defmodule Chatplayer.UserManager.User do
   use Ecto.Schema
   import Ecto.Changeset
   alias Comeonin.Bcrypt
+  alias Chatplayer.Api.Msg
 
   schema "users" do
     field :email, :string
@@ -9,6 +10,7 @@ defmodule Chatplayer.UserManager.User do
     field :encrypted_password, :string
     field :password, :string, virtual: true
     field :password_confirmation, :string, virtual: true
+    has_many :msgs, Msg
 
     timestamps()
   end

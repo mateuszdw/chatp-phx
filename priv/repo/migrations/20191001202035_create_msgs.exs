@@ -4,7 +4,8 @@ defmodule Chatplayer.Repo.Migrations.CreateMsgs do
   def change do
     create table(:msgs) do
       add :content, :string
-
+      add :user_id, references(:users)
+      
       timestamps()
     end
 

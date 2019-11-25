@@ -2,7 +2,12 @@ defmodule ChatplayerWeb.UsersView do
   use ChatplayerWeb, :view
   use JaSerializer.PhoenixView
 
-  attributes [:email, :name]
+  attributes [:email, :name, :avatar]
+
+  def avatar(user, _conn) do
+    avatar_hash = :crypto.hash(:md5, user.email) |> Base.encode16(case: :lower)
+    "https://www.gravatar.com/avatar/#{avatar_hash}?d=identicon"
+  end
   # def render("index.json", %{pages: pages}) do
   #   %{data: render_many(pages, UsersView, "page.json")}
   # end
