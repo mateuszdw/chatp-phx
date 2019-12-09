@@ -71,18 +71,18 @@ defmodule ChatplayerWeb.UserPresence do
   original presence data.
   """
 
-  # def fetch(topic, entries) do
-  #   users = entries
-  #     |> Map.keys()
-  #     |> UserManager.get_users
-  #     |> Enum.map(fn user -> %{to_string(user.id) => JaSerializer.format(UsersView, user)} end)
-  #     |> Enum.at(0)
-  #   # => %{"123" => %{name: "User 123"}, "456" => %{name: nil}}
-  #
-  #   for {key, %{metas: metas}} <- entries, into: %{} do
-  #     {key, %{metas: metas, user: users[key]}}
-  #   end
-  # end
+  def fetch(topic, entries) do
+    users = entries
+      |> Map.keys()
+      |> UserManager.get_users
+      |> Enum.map(fn user -> %{to_string(user.id) => JaSerializer.format(UsersView, user)} end)
+      |> Enum.at(0)
+    # => %{"123" => %{name: "User 123"}, "456" => %{name: nil}}
+
+    for {key, %{metas: metas}} <- entries, into: %{} do
+      {key, %{metas: metas, user: users[key]}}
+    end
+  end
 
   use Phoenix.Presence, otp_app: :chatplayer,
                         pubsub_server: Chatplayer.PubSub

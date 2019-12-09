@@ -11,7 +11,18 @@ defmodule ChatplayerWeb.RoomChannel do
     send(self(), :user_joined)
     case Api.find_or_create_room_by_name(name) do
       nil -> {:error, %{reason: "not found"}}
-      room -> {:ok, JaSerializer.format(RoomsView, room), socket}
+      room ->
+        socket = assign(socket, :current_room, room)
+        {:ok, JaSerializer.format(RoomsView, room, %{}), socket}
+    end
+  end
+
+  def handle_in("take_msgs", %{}, socket) do
+    if room = socket.assigns.current_room do
+      room = room |> Repo.preload(:msgs)
+      msgs = room.msgs |> Repo.preload(:user)
+      serializer = JaSerializer.format(MsgView, msgs, %{}, include: "user")
+      {:reply, {:ok, serializer}, socket}
     end
   end
 
@@ -56,10 +67,10 @@ defmodule ChatplayerWeb.RoomChannel do
   # broadcast to everyone in the current topic (room:lobby).
   def handle_in("send_msg", %{"content" => msg}, socket) do
     if user = socket.assigns.current_user do
-      {:ok, new_msg} = Api.create_msg(%{content: msg, user_id: user.id})
+      {:ok, new_msg} = Api.create_msg(%{content: msg, user_id: user.id, room_id: socket.assigns.current_room.id})
       new_msg_with_user = new_msg |> Repo.preload(:user)
 
-      broadcast!(socket, "new_msg", JaSerializer.format(MsgView, new_msg_with_user))
+      broadcast!(socket, "new_msg", JaSerializer.format(MsgView, new_msg_with_user, %{}, include: "user"))
       {:reply, :ok ,socket}
       # {:reply, {:ok, JaSerializer.format(MsgView, new_msg_with_user)}, socket}
     else

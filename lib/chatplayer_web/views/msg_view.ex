@@ -3,7 +3,9 @@ defmodule ChatplayerWeb.MsgView do
   use JaSerializer.PhoenixView
 
   attributes [:content, :inserted_at]
+
   has_one :user,
     serializer: ChatplayerWeb.UsersView,
-    include: true
+    include: false,
+    identifiers: :when_included
 end
