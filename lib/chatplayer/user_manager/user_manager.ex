@@ -5,10 +5,7 @@ defmodule Chatplayer.UserManager do
 
   import Ecto.Query, warn: false
   alias Chatplayer.Repo
-
   alias Chatplayer.UserManager.User
-
-  alias Comeonin.Bcrypt
 
   @doc """
   Returns the list of users.
@@ -122,10 +119,10 @@ defmodule Chatplayer.UserManager do
     query = from u in User, where: u.email == ^email
     case Repo.one(query) do
       nil ->
-        Bcrypt.dummy_checkpw()
+        Bcrypt.no_user_verify()
         {:error, :unauthorized}
       user ->
-        if Bcrypt.checkpw(plain_text_password, user.encrypted_password) do
+        if Bcrypt.verify_pass(plain_text_password, user.encrypted_password) do
           {:ok, user}
         else
           {:error, :unauthorized}

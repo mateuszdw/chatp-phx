@@ -1,7 +1,6 @@
 defmodule Chatplayer.UserManager.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Comeonin.Bcrypt
   alias Chatplayer.Api.Msg
 
   schema "users" do
@@ -27,7 +26,7 @@ defmodule Chatplayer.UserManager.User do
   end
 
   defp put_password_hash(%Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset) do
-    change(changeset, encrypted_password: Bcrypt.hashpwsalt(password))
+    change(changeset, encrypted_password: Bcrypt.hash_pwd_salt(password))
   end
 
   defp put_password_hash(changeset), do: changeset

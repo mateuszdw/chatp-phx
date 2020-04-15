@@ -27,8 +27,7 @@ config :chatplayer, Chatplayer.UserManager.Guardian,
   secret_key: "IKbjsCqQBw0OkdZKTYIyDRFtHoVZKq/XkgeYU8SaSUGG+PBY8bMXWt9Wd/JuSt1T" # put the result of the mix command above here
 
 # ja_serializer configs
-config :phoenix, :format_encoders,
-  "json-api": Poison
+config :phoenix, :json_library, Jason
 
 config :mime, :types, %{
   "application/vnd.api+json" => ["json-api"]
