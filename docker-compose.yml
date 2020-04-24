@@ -11,15 +11,13 @@ services:
     build: .
     volumes:
       - .:/app:delegated
+      - static:/app/priv/static:delegated
+      - deps:/app/deps:delegated
+      - build:/app/_build:delegated
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/chatplayer_prod
-      # Variables to connect to our Postgres server
-      # PGUSER: postgres
-      # PGPASSWORD: postgres
-      PGDATABASE: chatplayer_prod # only for docker-entrypoint script
-      # PGPORT: 5432
-      # Hostname of our Postgres container
-      # PGHOST: db
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/chatplayer_prod
+      - MIX_ENV=prod
+      # - PORT=4000
     ports:
       # Mapping the port to make the Phoenix app accessible outside of the container
       - "4000:4000"
@@ -37,4 +35,7 @@ services:
       - pgdata:/var/lib/postgresql/data:delegated
 # Define the volumes
 volumes:
+  static:
+  deps:
+  build:
   pgdata:

@@ -43,5 +43,5 @@ config :chatplayer, Chatplayer.Repo,
   # username: "postgres",
   # password: "postgres",
   database: "chatplayer_dev",
-  hostname: "localhost",
+  hostname: "db",
   pool_size: 10
