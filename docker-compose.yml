@@ -1,14 +1,16 @@
 # Version of docker-compose
-version: '3'
+version: '3.2'
 
 # Containers we are going to run
 services:
   # Our Phoenix container
-  phoenix:
+  app:
+    stdin_open: true
+    tty: true
     # The build parameters for this container.
-    build:
-      # Here we define that it should build from the current directory
-      context: .
+    build: .
+    volumes:
+      - .:/app:delegated
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/chatplayer_prod
       # Variables to connect to our Postgres server
@@ -25,12 +27,14 @@ services:
       # The db container needs to be started before we start this container
       - db
   db:
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
     image: postgres:11.3
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 54320:5432
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data:delegated
 # Define the volumes
 volumes:
   pgdata:

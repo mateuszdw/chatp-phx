@@ -5,10 +5,6 @@ defmodule ChatplayerWeb.UserSocket do
   ## Channels
   channel "room:*", ChatplayerWeb.RoomChannel
 
-  ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
-  # transport :longpoll, Phoenix.Transports.LongPoll
-
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
   # verification, you can put default assigns into
@@ -21,9 +17,13 @@ defmodule ChatplayerWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
 
-  def connect(%{"token" => token}, socket) do
+  def connect(%{"token" => token, "device" => device}, socket) do
+    socket = socket
+      |> assign(:device, device) # TODO need to check values for device, could be browser or background
     if user = verify_token_and_get_user(token) do
-      {:ok, assign(socket, :current_user, user)}
+      socket = socket
+        |> assign(:current_user, user)
+      {:ok, socket}
     else
       # everyone can connect
       {:ok, socket}

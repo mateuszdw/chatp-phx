@@ -1,4 +1,5 @@
 defmodule ChatplayerWeb.UserPresence do
+  require Logger
   alias Chatplayer.UserManager
   alias ChatplayerWeb.{UsersView}
   @moduledoc """
@@ -71,19 +72,22 @@ defmodule ChatplayerWeb.UserPresence do
   original presence data.
   """
 
+  use Phoenix.Presence, otp_app: :chatplayer,
+                        pubsub_server: Chatplayer.PubSub
+
   def fetch(topic, entries) do
+    # Logger.debug("USER PRESENCE ENTRIES::: #{inspect(entries)}", ansi_color: :green)
     users = entries
       |> Map.keys()
       |> UserManager.get_users
       |> Enum.map(fn user -> %{to_string(user.id) => JaSerializer.format(UsersView, user)} end)
-      |> Enum.at(0)
+      # |> Enum.at(0)
     # => %{"123" => %{name: "User 123"}, "456" => %{name: nil}}
+    # Logger.debug("USER PRESENCE USERS::: #{inspect(users, pretty: true)}", ansi_color: :yellow)
 
     for {key, %{metas: metas}} <- entries, into: %{} do
-      {key, %{metas: metas, user: users[key]}}
+      # Logger.debug("USER PRESENCE USERS::: #{inspect(key)}", ansi_color: :yellow)
+      {key, %{metas: metas, user: Enum.find(users, fn user -> user[key] end)[key]}}
     end
   end
-
-  use Phoenix.Presence, otp_app: :chatplayer,
-                        pubsub_server: Chatplayer.PubSub
 end

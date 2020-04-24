@@ -1,4 +1,5 @@
 defmodule ChatplayerWeb.RoomChannel do
+  require Logger
   use ChatplayerWeb, :channel
   alias Chatplayer.{Api, UserManager, UserManager.User, UserManager.Guardian, Repo}
   alias ChatplayerWeb.{UsersView, RoomsView, MsgView, UserPresence}
@@ -8,7 +9,8 @@ defmodule ChatplayerWeb.RoomChannel do
   #   {:ok, socket}
   # end
   def join("room:" <> name, params, socket) do
-    send(self(), :user_joined)
+    Logger.debug(inspect(socket), ansi_color: :yellow)
+    send(self(), :after_join)
     case Api.find_or_create_room_by_name(name) do
       nil -> {:error, %{reason: "not found"}}
       room ->
@@ -26,14 +28,22 @@ defmodule ChatplayerWeb.RoomChannel do
     end
   end
 
-  def handle_info(:user_joined, socket) do
-    if user = socket.assigns.current_user do
+  def handle_info(:after_join, socket) do
+    if user = (Map.has_key?(socket.assigns, :current_user) && socket.assigns.current_user) do
       push(socket, "presence_state", UserPresence.list(socket))
-      {:ok, _} = UserPresence.track(socket, user.id, %{
+      # if(Kernel.map_size(UserPresence.list(socket)) < 1) do
+      user_presence = UserPresence.track(socket, user.id, %{
         online_at: inspect(System.system_time(:second)),
-        devise: :browser,
+        device: socket.assigns.device,
         name: user.name
       })
+      Logger.debug("PRESENCE LIST::: #{inspect(UserPresence.list(socket), pretty: true)}", ansi_color: :magenta)
+      {:ok, _} = user_presence
+      # else
+        # {:error, %{reason: "room is full"}}
+        # Logger.debug("NO MORE CONNECTIONS!!!", ansi_color: :magenta)
+      # end
+      
     end
     {:noreply, socket}
   end
