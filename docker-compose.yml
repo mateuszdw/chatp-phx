@@ -17,7 +17,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/chatplayer_prod
       - MIX_ENV=prod
-      # - PORT=4000
+      - PORT=4000
     ports:
       # Mapping the port to make the Phoenix app accessible outside of the container
       - "4000:4000"
